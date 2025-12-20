@@ -1,0 +1,21 @@
+{
+  "pigeon": {
+    "name": "Pigeon",
+    "habitat": "Şehirler, parklar ve açık alanlar",
+    "lifespan": "3–5 yıl",
+    "description": "Güvercinler insan yaşamına uyum sağlamış sosyal kuşlardır."
+  },
+  "sparrow": {
+    "name": "Sparrow",
+    "habitat": "Bahçeler, köyler ve şehir merkezleri",
+    "lifespan": "3–5 yıl",
+    "description": "Serçeler küçük, çevik ve oldukça yaygın kuşlardır."
+  },
+  "crow": {
+    "name": "Crow",
+    "habitat": "Ormanlar, kırsal alanlar ve şehir çevresi",
+    "lifespan": "10–15 yıl",
+    "description": "Kargalar yüksek zekâları ve problem çözme yetenekleriyle bilinir."
+  }
+}
+
