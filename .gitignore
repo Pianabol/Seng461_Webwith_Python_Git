@@ -1,0 +1,20 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+venv/
+.venv/
+env/
+
+
+.DS_Store
+
+
+.env
+
+
+.vscode/
+
+# Large Model Files : Eğer model dosyası github limitini aşarsa bunu aktif ederiz.
+# *.pt
