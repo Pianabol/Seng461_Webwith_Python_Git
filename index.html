@@ -46,204 +46,176 @@
     </div>
 
 <script>
-    // ------------------- ELEMENTS -------------------
-    const uploadScreen = document.getElementById("upload-screen");
-    const resultScreen = document.getElementById("result-screen");
-
-    const fileInput = document.getElementById("file-upload");
-    const previewBox = document.getElementById("preview-box");
-    const previewImg = document.getElementById("preview-image");
-    const previewName = document.getElementById("preview-name");
-    const analyzeBtn = document.getElementById("analyze-btn");
-
-    const detectedImg = document.getElementById("detected-image");
-    const detList = document.getElementById("det-list");
-    const backBtn = document.getElementById("back-btn");
-
-    // INFO CARD ELEMENTS
-    const infoCard = document.getElementById("info-card");
-    const infoName = document.getElementById("info-name");
-    const infoHabitat = document.getElementById("info-habitat");
-    const infoLifespan = document.getElementById("info-lifespan");
-    const infoDesc = document.getElementById("info-desc");
-
-     
-    function resetResultUI() 
-    {
-        detList.innerHTML = "";
-        detectedImg.src = "";
-
-        infoCard.style.display = "none";
-        infoName.textContent = "";
-        infoHabitat.textContent = "";
-        infoLifespan.textContent = "";
-        infoDesc.textContent = "";
-    }
-
-    function resetUploadUI() 
-    {
-        previewImg.src = "";
-        previewName.textContent = "";
-        previewBox.style.display = "none";
-        fileInput.value = "";
-    }
-
-    function showResultScreen() 
-    {
-        // clean classes
-        uploadScreen.classList.remove("fade-in", "fade-out");
-        resultScreen.classList.remove("fade-in", "fade-out");
-
-        // fade upload out
-        uploadScreen.classList.add("fade-out");
-
-        setTimeout(() => {
-            uploadScreen.style.display = "none";
-
-            resultScreen.style.display = "block";
-            resultScreen.classList.remove("fade-out");
-            resultScreen.classList.add("fade-in");
-        }, 300);
-    }
-
-    function showUploadScreen() 
-    {
-        // clean classes
-        uploadScreen.classList.remove("fade-in", "fade-out");
-        resultScreen.classList.remove("fade-in", "fade-out");
-
-        // fade result out
-        resultScreen.classList.add("fade-out");
-
-        setTimeout(() => {
-            resultScreen.style.display = "none";
-
-            uploadScreen.style.display = "block";
-            uploadScreen.classList.add("fade-in");
-        }, 300);
-    }
-
-     
-    fileInput.addEventListener("change", () => {
-        const file = fileInput.files[0];
-        if (!file) return;
-
-        const reader = new FileReader();
-        reader.onload = () => {
-            previewImg.src = reader.result;
-            previewName.textContent = file.name;
-            previewBox.style.display = "block";
-        };
-        reader.readAsDataURL(file);
-    });
-
-
-    analyzeBtn.addEventListener("click", async () => {
-        const file = fileInput.files[0];
-        if (!file) {
-            alert("Please select an image first.");
-            return;
-        }
-
-        // UI: Result ekranına geçmeden önce result state temizle
-        resetResultUI();
-
-        const formData = new FormData();
-        formData.append("image", file);
-
-        let data;
-        try 
-        {
-            const response = await fetch("http://127.0.0.1:8000/predict", 
-            {
-                method: "POST",
-                body: formData
-            });
-            data = await response.json();
-        } 
-        catch (err) 
-        {
-            // Fetch fail olursa bile deterministik davran
-            showResultScreen();
-            detectedImg.src = previewImg.src;
-            detList.innerHTML = `
-                <li style="
-                    list-style:none;
-                    font-size:18px;
-                    font-weight:600;
-                    color:#c0392b;
-                    margin-top:15px;">
-                    API connection error.
-                </li>
-            `;
-            return;
-        }
-
-        // Ekranı göster (her durumda)
-        showResultScreen();
-
-        // kuş türü belirlenemezse 
-        if (!data.detections || data.detections.length === 0) 
-        {
-            detectedImg.src = previewImg.src;
-
-            detList.innerHTML = `
-                <li style="
-                    list-style:none;
-                    font-size:18px;
-                    font-weight:600;
-                    color:#c0392b;
-                    margin-top:15px;">
-                    No birds detected due to dataset limitations.
-                </li>
-            `;
-
+        // ELEMENTS 
+        const uploadScreen = document.getElementById("upload-screen");
+        const resultScreen = document.getElementById("result-screen");
+    
+        const fileInput = document.getElementById("file-upload");
+        const previewBox = document.getElementById("preview-box");
+        const previewImg = document.getElementById("preview-image");
+        const previewName = document.getElementById("preview-name");
+        const analyzeBtn = document.getElementById("analyze-btn");
+    
+        const detectedImg = document.getElementById("detected-image");
+        const detList = document.getElementById("det-list");
+        const backBtn = document.getElementById("back-btn");
+    
+        // INFO CARD ELEMENTS
+        const infoCard = document.getElementById("info-card");
+        const infoName = document.getElementById("info-name");
+        const infoHabitat = document.getElementById("info-habitat");
+        const infoLifespan = document.getElementById("info-lifespan");
+        const infoDesc = document.getElementById("info-desc");
+    
+        // HELPERS 
+        function resetResultUI() {
+            detList.innerHTML = "";
+            detectedImg.src = "";
+    
             infoCard.style.display = "none";
-            return;
+            infoName.textContent = "";
+            infoHabitat.textContent = "";
+            infoLifespan.textContent = "";
+            infoDesc.textContent = "";
         }
-
-        //DETECTION FOUND 
-        detectedImg.src = "http://127.0.0.1:8000" + data.output_image;
-
-        detList.innerHTML = "";
-        data.detections.forEach(det => {
-            const li = document.createElement("li");
-            li.textContent = `${det.class} (${det.confidence}%)`;
-            detList.appendChild(li);
+    
+        function resetUploadUI() {
+            previewImg.src = "";
+            previewName.textContent = "";
+            previewBox.style.display = "none";
+            fileInput.value = "";
+        }
+    
+        function showResultScreen() {
+            uploadScreen.classList.remove("fade-in", "fade-out");
+            resultScreen.classList.remove("fade-in", "fade-out");
+    
+            uploadScreen.classList.add("fade-out");
+    
+            setTimeout(() => {
+                uploadScreen.style.display = "none";
+                resultScreen.style.display = "block";
+                resultScreen.classList.remove("fade-out");
+                resultScreen.classList.add("fade-in");
+            }, 300);
+        }
+    
+        function showUploadScreen() {
+            uploadScreen.classList.remove("fade-in", "fade-out");
+            resultScreen.classList.remove("fade-in", "fade-out");
+    
+            resultScreen.classList.add("fade-out");
+    
+            setTimeout(() => {
+                resultScreen.style.display = "none";
+                uploadScreen.style.display = "block";
+                uploadScreen.classList.add("fade-in");
+            }, 300);
+        }
+    
+        // PREVIEW 
+        fileInput.addEventListener("change", () => {
+            const file = fileInput.files[0];
+            if (!file) return;
+    
+            const reader = new FileReader();
+            reader.onload = () => {
+                previewImg.src = reader.result;
+                previewName.textContent = file.name;
+                previewBox.style.display = "block";
+            };
+            reader.readAsDataURL(file);
         });
+    
+        // ------------------- ANALYZE -------------------
+        analyzeBtn.addEventListener("click", async () => {
+            const file = fileInput.files[0];
+            if (!file) {
+                alert("Please select an image first.");
+                return;
+            }
+    
+            resetResultUI();
+    
+            const formData = new FormData();
+            formData.append("image", file);
+    
+            let data;
+            try 
+            {
+                const response = await fetch("http://127.0.0.1:5000/predict", {
+                    method: "POST",
+                    body: formData
+                });
+                data = await response.json();
+            }
+            catch (err) 
+            {
+                console.error(err);
+                showResultScreen();
+                detectedImg.src = previewImg.src;
+                detList.innerHTML = `
+                    <li style="color:#c0392b; font-weight:600; margin-top:15px; list-style:none;">
+                        API connection error. Make sure Flask is running on port 5000.
+                    </li>
+                `;
+                return;
+            }
+    
+            showResultScreen();
+    
+            //NO DETECTION 
+            if (!data.detections || data.detections.length === 0) {
+                detectedImg.src = previewImg.src;
+                detList.innerHTML = `
+                    <li style="color:#c0392b; font-weight:600; margin-top:15px; list-style:none;">
+                        No birds detected.
+                    </li>
+                `;
+                infoCard.style.display = "none";
+                return;
+            }
+    
+          
+            // Flask'tan gelen resim yolunu 5000 portuna yönlendiriyoruz
+            detectedImg.src = "http://127.0.0.1:5000" + data.output_image;
+    
+            detList.innerHTML = "";
+            data.detections.forEach(det => {
+                const li = document.createElement("li");
+                li.textContent = `${det.class} (${det.confidence}%)`;
+                detList.appendChild(li);
+            });
+    
+            // INFO CARD
+            if (data.bird_info) 
+            {
 
-        // INFO CARD (varsa göster)
-        if (data.bird_info) 
-        {
-            infoName.textContent = data.bird_info.name ?? "";
-            infoHabitat.textContent = data.bird_info.habitat ?? "";
-            infoLifespan.textContent = data.bird_info.lifespan ?? "";
-            infoDesc.textContent = data.bird_info.description ?? "";
-            infoCard.style.display = "block";
-        } 
-        else 
-        {
-            infoCard.style.display = "none";
-        }
-    });
-
-     
-    backBtn.addEventListener("click", () => {
-        // ekran geri dönmeden önce state temizle
-        resetResultUI();
-        resetUploadUI();
-
-        // upload ekranına dön
-        showUploadScreen();
-    });
-</script>
-
+                infoName.textContent = data.bird_info.name ?? "";
+                infoHabitat.textContent = data.bird_info.habitat ?? "";
+                infoLifespan.textContent = data.bird_info.lifespan ?? "";
+                infoDesc.textContent = data.bird_info.description ?? "";
+                infoCard.style.display = "block";
+            }
+             else 
+            {
+                infoCard.style.display = "none";
+            }
+        });
+    
+       
+        backBtn.addEventListener("click", () => {
+            resetResultUI();
+            resetUploadUI();
+            showUploadScreen();
+        });
+    </script>
 </body>
 </html>
 
 
-<!-- Bu klasörde çalıştır: python -m http.server 5500 -->
-<!-- bu python ile static server için gerekli. static server görüntü işleyebilmek fastapi çağrıları yapabilmek için gerekli-->
+
+<!-- flask için venv aktifken direkt terminalden dosyayı çalıştır. -->
 
 
 
