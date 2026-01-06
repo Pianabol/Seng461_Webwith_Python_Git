@@ -130,3 +130,6 @@ def predict():
 if __name__ == '__main__':
     # Flask varsayılan olarak 5000 portunda çalışıyo
     app.run(debug=True, port=5000)
+
+
+    # source venv/bin/activate
