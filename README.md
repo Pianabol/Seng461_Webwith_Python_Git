@@ -13,3 +13,7 @@ The aim of this project is to detect bird species using a **YOLOv8** AI model. T
 ## Team Members
 * **Furkan Tuç** - 220205033
 * **Nisa Doğa Yücel** - 220201012
+
+
+## How to run
+*  Install repo, setup venv by typing whatever is acceptable by your OS, activate venv, install requirements, type python app.py for backend, then click index.html for website.
